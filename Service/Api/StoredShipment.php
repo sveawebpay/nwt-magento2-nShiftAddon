@@ -14,6 +14,7 @@ use Magento\Framework\Logger\Monolog as Logger;
 use Svea\NShiftAddon\Service\Config;
 use Svea\NShiftAddon\Exception\ApiException;
 use Svea\Checkout\Service\SveaShippingInfo;
+use Svea\Checkout\Model\Shipping\Carrier;
 
 class StoredShipment
 {
@@ -101,8 +102,10 @@ class StoredShipment
             throw new ApiException(__($message));
         }
 
+        $responseArray = $this->serializer->unserialize($responseBody);
         $track = $this->trackFactory->create();
-        $track->setTrackNumber($responseBody['id']);
+        $track->setCarrierCode(Carrier::CODE);
+        $track->setTrackNumber($responseArray['id']);
         $track->setTitle(self::TRACK_TITLE);
         $this->shipment->addTrack($track);
 

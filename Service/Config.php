@@ -10,7 +10,7 @@ use Magento\Store\Model\ScopeInterface;
  */
 class Config
 {
-    const BASE_CONFIG_PATH = 'svea_checkout/settings/nshiftaddon/';
+    const BASE_CONFIG_PATH = 'svea_checkout_nshiftaddon/settings/';
 
     private ScopeConfigInterface $scopeConfig;
 
@@ -27,7 +27,7 @@ class Config
     public function isActive(?int $storeId): bool
     {
         return $this->scopeConfig->isSetFlag(
-            'sveacheckout/nshiftaddon/active',
+            self::BASE_CONFIG_PATH . 'active',
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <svea_checkout_nshiftaddon>
+            <settings>
+                <private_api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+            </settings>
+        </svea_checkout_nshiftaddon>
+    </default>
+</config>

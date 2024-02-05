@@ -3,7 +3,6 @@
     <module name="Svea_NShiftAddon">
         <sequence>
             <module name="Svea_Checkout" />
-            <module name="NWT_Unifaun" />
         </sequence>
     </module>
 </config>

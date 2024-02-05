@@ -11,6 +11,7 @@
                         <label>Active</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <comment>Requires nShift credentials configured to work</comment>
+                        <config_path>svea_checkout_nshiftaddon/settings/active</config_path>
                     </field>
 
                     <field id="test_mode" translate="label comment" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -18,12 +19,14 @@
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <comment>Do you want to enable test mode?</comment>
                         <depends><field id="active">1</field></depends>
+                        <config_path>svea_checkout_nshiftaddon/settings/test_mode</config_path>
                     </field>
         
                     <field id="public_api_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Public API Key (ID)</label>
                         <comment>Enter the API ID here. Create API Keys in nShift, make sure you choose Web Services (REST).</comment>
                         <depends><field id="active">1</field></depends>
+                        <config_path>svea_checkout_nshiftaddon/settings/public_api_key</config_path>
                     </field>
     
                     <field id="private_api_key" translate="label" type="obscure" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -31,12 +34,14 @@
                         <comment>Enter the Secret API ID here. Create API Keys in nShift, make sure you choose Web Services (REST).</comment>
                         <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                         <depends><field id="active">1</field></depends>
+                        <config_path>svea_checkout_nshiftaddon/settings/private_api_key</config_path>
                     </field>
     
                     <field id="sender_quick_id" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Quick ID (Sender)</label>
                         <comment>Define ALL SENDER data (Name, Address etc.) and Partners (customer id etc.) in nShift.</comment>
                         <depends><field id="active">1</field></depends>
+                        <config_path>svea_checkout_nshiftaddon/settings/sender_quick_id</config_path>
                     </field>
                 </group>
             </group>
