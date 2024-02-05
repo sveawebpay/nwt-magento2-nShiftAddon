@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="svea_checkout">
+            <group id="settings">
+                <group id="nshiftaddon" type="text" translate="label" sortOrder="1999" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>NShift Addon</label>
+                    <comment>Activate to enable creating stored shipments in nShift for Svea Shipping orders</comment>
+                    <field id="active" translate="label comment" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" type="select">
+                        <label>Active</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <comment>Requires nShift credentials configured to work</comment>
+                    </field>
+
+                    <field id="test_mode" translate="label comment" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Test mode</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <comment>Do you want to enable test mode?</comment>
+                        <depends><field id="active">1</field></depends>
+                    </field>
+        
+                    <field id="public_api_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Public API Key (ID)</label>
+                        <comment>Enter the API ID here. Create API Keys in nShift, make sure you choose Web Services (REST).</comment>
+                        <depends><field id="active">1</field></depends>
+                    </field>
+    
+                    <field id="private_api_key" translate="label" type="obscure" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Secret API Key (Secret Id)</label>
+                        <comment>Enter the Secret API ID here. Create API Keys in nShift, make sure you choose Web Services (REST).</comment>
+                        <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                        <depends><field id="active">1</field></depends>
+                    </field>
+    
+                    <field id="sender_quick_id" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Quick ID (Sender)</label>
+                        <comment>Define ALL SENDER data (Name, Address etc.) and Partners (customer id etc.) in nShift.</comment>
+                        <depends><field id="active">1</field></depends>
+                    </field>
+                </group>
+            </group>
+        </section>
+    </system>
+</config>
