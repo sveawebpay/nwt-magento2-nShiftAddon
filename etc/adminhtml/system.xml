@@ -13,14 +13,6 @@
                         <comment>Requires nShift credentials configured to work</comment>
                         <config_path>svea_checkout_nshiftaddon/settings/active</config_path>
                     </field>
-
-                    <field id="test_mode" translate="label comment" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
-                        <label>Test mode</label>
-                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                        <comment>Do you want to enable test mode?</comment>
-                        <depends><field id="active">1</field></depends>
-                        <config_path>svea_checkout_nshiftaddon/settings/test_mode</config_path>
-                    </field>
         
                     <field id="public_api_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Public API Key (ID)</label>

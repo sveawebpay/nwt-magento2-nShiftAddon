@@ -178,8 +178,7 @@ class StoredShipment
             'receiver' => $this->getReceiver(),
             'service' => $this->getService(),
             'parcels' => $this->getParcels(),
-            'agent' => $this->getAgentData(),
-            'test' => $this->config->isTestMode($storeId)
+            'agent' => $this->getAgentData()
         ];
 
         return array_filter($shipmentData);

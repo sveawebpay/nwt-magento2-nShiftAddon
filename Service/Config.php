@@ -60,19 +60,6 @@ class Config
     }
 
     /**
-     * @param integer|null $storeId
-     * @return boolean
-     */
-    public function isTestMode(?int $storeId): bool
-    {
-        return $this->scopeConfig->isSetFlag(
-            self::BASE_CONFIG_PATH . 'test_mode',
-            ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
-    }
-
-    /**
      * @param integer|null $store
      * @return int
      */
