@@ -13,8 +13,7 @@
   },
   "require": {
     "php": ">=7.1",
-    "sveawebpay/nwt-magento2-checkout": "^1.4.0",
-    "nwt/unifaun": "^1.0.0"
+    "sveawebpay/nwt-magento2-checkout": "*"
   },
   "repositories": [
     {
