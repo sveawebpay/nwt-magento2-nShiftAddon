@@ -114,35 +114,6 @@ class StoredShipment
     }
 
     /**
-     * Creates a shipment from a stored shipment. Pdf data must be sent as parameters.
-     *
-     * @param string $storedShipmentId
-     * @param Order $order
-     * @return void
-     */
-    public function createShipmentFromStoredShipment(string $storedShipmentId, Order $order)
-    {
-        $curl = $this->curlFactory->create();
-        $curl->setCredentials(
-            $this->config->getPublicKey(),
-            $this->config->getPrivateKey()
-        );
-
-        $bodyData = $this->getShipmentData();
-        $requestBody = $this->serializer->serialize($bodyData);
-
-        $path = implode('/', ['stored-shipments', $storedShipmentId, 'shipments']);
-        $targetUri = self::API_URL . $path;
-        $curl->post($targetUri, $requestBody);
-
-        try {
-            $this->handleCurlError($curl);
-        } catch (\Exception $e) {
-            $this->logger->error($e->getMessage());
-        }
-    }
-
-    /**
      * Throws exception on Curl error
      *
      * @param Curl $curl

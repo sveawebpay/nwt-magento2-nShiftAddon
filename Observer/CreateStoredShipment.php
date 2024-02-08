@@ -57,7 +57,8 @@ class CreateStoredShipment implements ObserverInterface
         try {
             $this->storedShipmentService->createStoredShipment($shipment);
         } catch (ApiException $e) {
-            $this->messageManager->addErrorMessage($e->getMessage());
+            $this->messageManager->addErrorMessage('Failed to Create nShift stored shipment, check error logs');
+            $this->messageManager->addErrorMessage('You can retry creating the Stored Shipment in the Shipment View');
         }
     }
 }
