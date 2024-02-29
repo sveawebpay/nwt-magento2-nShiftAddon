@@ -63,7 +63,7 @@ class StoredShipment
     }
 
     /**
-     * Creates a stored shipment
+     * Creates a prepared shipment, then a stored shipment
      *
      * @param Order $order
      * @param OrderShipment $shipment
@@ -72,19 +72,17 @@ class StoredShipment
      */
     public function createStoredShipment(OrderShipment $shipment): void
     {
-        $curl = $this->curlFactory->create();
-        $curl->setCredentials(
-            $this->config->getPublicKey(),
-            $this->config->getPrivateKey()
-        );
-        $curl->addHeader('Content-Type', 'application/json');
-
         $this->order = $shipment->getOrder();
         $this->shipment = $shipment;
-        $bodyData = $this->getShipmentData();
+
+        $this->createPreparedShipment();
+
+        $curl = $this->createCurl();
+        $bodyData = $this->getStoredShipmentData();
         $requestBody = $this->serializer->serialize($bodyData);
 
-        $targetUri = self::API_URL . 'stored-shipments';
+        // Prepared shipment ID = order increment ID
+        $targetUri = self::API_URL . 'prepared-shipments/' . $this->order->getIncrementId(). '/stored-shipments';
         $curl->post($targetUri, $requestBody);
 
         try {
@@ -109,7 +107,7 @@ class StoredShipment
         $track->setTitle(self::TRACK_TITLE);
         $this->shipment->addTrack($track);
 
-        // We save using track repo instead of shipment repo to avoid re-running these observer methods
+        // We save using track repo instead of shipment repo to avoid re-running observer methods
         $this->trackRepo->save($track);
     }
 
@@ -132,12 +130,12 @@ class StoredShipment
     }
 
     /**
-     * Convert order to array shipment data to be sent
+     * Convert order to array shipment data for creating Stored Shipment
      *
      * @param Order $order
      * @return array
      */
-    private function getShipmentData(): array
+    private function getStoredShipmentData(): array
     {
         $storeId = (int)$this->order->getStoreId();
 
@@ -147,8 +145,28 @@ class StoredShipment
             ],
             'orderNo' => $this->order->getIncrementId(),
             'receiver' => $this->getReceiver(),
-            'service' => $this->getService(),
-            'parcels' => $this->getParcels(),
+            'parcels' => $this->getParcels()
+        ];
+
+        return array_filter($shipmentData);
+    }
+
+    /**
+     * Convert order to array shipment data for creating prepared shipment
+     *
+     * @param Order $order
+     * @return array
+     */
+    private function getPreparedShipmentData(): array
+    {
+        $storeId = (int)$this->order->getStoreId();
+
+        $shipmentData = [
+            'sender' => [
+                'quickId' => $this->config->getSenderQuickId($storeId)
+            ],
+            'orderNo' => $this->order->getIncrementId(),
+            'receiver' => $this->getReceiver(),
             'agent' => $this->getAgentData()
         ];
 
@@ -180,17 +198,6 @@ class StoredShipment
         $receiver['vatno'] =$this->order->getCustomerTaxvat();
 
         return array_filter($receiver);
-    }
-
-    /**
-     * @return array
-     */
-    private function getService(): array
-    {
-        $orderSveaShippingInfo = $this->sveaShippingInfo->getFromOrder($this->order);
-        return [
-            'id' => $orderSveaShippingInfo->getData('id')
-        ];
     }
 
     /**
@@ -255,5 +262,56 @@ class StoredShipment
         }
 
         return [$parcel];
+    }
+
+    /**
+     * Create a prepared shipment
+     *
+     * @return void
+     * @throws ApiException
+     */
+    private function createPreparedShipment(): void
+    {
+        $orderSveaShippingInfo = $this->sveaShippingInfo->getFromOrder($this->order);
+        $orderWeight = $this->order->getWeight();
+        $requestData = [
+            'shipment'           => $this->getPreparedShipmentData(),
+            'selectedOptionId'   => $orderSveaShippingInfo['id'],
+            'selectedAddons'     => $orderSveaShippingInfo['addons'] ?? false,
+            'prepareId'          => $this->order->getIncrementId(),
+            'returnShipmentData' => false,
+            'weight'             => $orderWeight > 0 ? $orderWeight : 0.01
+        ];
+
+        $deliveryCheckoutId = $this->config->getDeliveryCheckoutId((int)$this->order->getStoreId());
+        $targetUri = self::API_URL . 'delivery-checkouts/' . $deliveryCheckoutId;
+
+        $requestBody = $this->serializer->serialize(array_filter($requestData));
+
+        $curl = $this->createCurl();
+        $curl->post($targetUri, $requestBody);
+        try {
+            $this->handleCurlError($curl);
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+            throw new ApiException(__($e->getMessage()));
+        }
+    }
+
+    /**
+     * Create Curl client instance with authentication
+     *
+     * @return \Magento\Framework\HTTP\Client\Curl
+     */
+    private function createCurl(): \Magento\Framework\HTTP\Client\Curl
+    {
+        $curl = $this->curlFactory->create();
+        $storeId = (int)$this->order->getStoreId();
+        $curl->setCredentials(
+            $this->config->getPublicKey($storeId),
+            $this->config->getPrivateKey($storeId)
+        );
+        $curl->addHeader('Content-Type', 'application/json');
+        return $curl;
     }
 }

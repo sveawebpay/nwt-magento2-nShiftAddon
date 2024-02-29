@@ -61,6 +61,19 @@ class Config
 
     /**
      * @param integer|null $store
+     * @return string
+     */
+    public function getDeliveryCheckoutId(?int $store = null): string
+    {
+        return (string)$this->scopeConfig->getValue(
+            self::BASE_CONFIG_PATH . 'delivery_checkout_id',
+            ScopeInterface::SCOPE_STORE,
+            $store
+        );
+    }
+
+    /**
+     * @param integer|null $store
      * @return int
      */
     public function getSenderQuickId(?int $store = null): int

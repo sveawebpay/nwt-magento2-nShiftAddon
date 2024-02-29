@@ -29,6 +29,12 @@
                         <config_path>svea_checkout_nshiftaddon/settings/private_api_key</config_path>
                     </field>
     
+                    <field id="delivery_checkout_id" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Delivery Checkout ID</label>
+                        <depends><field id="active">1</field></depends>
+                        <config_path>svea_checkout_nshiftaddon/settings/delivery_checkout_id</config_path>
+                    </field>
+
                     <field id="sender_quick_id" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Quick ID (Sender)</label>
                         <comment>Define ALL SENDER data (Name, Address etc.) and Partners (customer id etc.) in nShift.</comment>
