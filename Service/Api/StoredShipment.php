@@ -75,14 +75,14 @@ class StoredShipment
         $this->order = $shipment->getOrder();
         $this->shipment = $shipment;
 
-        $this->createPreparedShipment();
+        //$this->createPreparedShipment();//we'll use the prepared shipment created by svea
 
         $curl = $this->createCurl();
         $bodyData = $this->getStoredShipmentData();
         $requestBody = $this->serializer->serialize($bodyData);
 
         // Prepared shipment ID = order increment ID
-        $targetUri = self::API_URL . 'prepared-shipments/' . $this->order->getIncrementId(). '/stored-shipments';
+        $targetUri = self::API_URL . 'prepared-shipments/' . $this->order->getPayment()->getAdditionalInformation('svea_order_id'). '/stored-shipments?keepPreparedShipment=true';
         $curl->post($targetUri, $requestBody);
 
         try {
@@ -99,8 +99,12 @@ class StoredShipment
             $this->logger->error($message);
             throw new ApiException(__($message));
         }
-
         $responseArray = $this->serializer->unserialize($responseBody);
+        if($responseArray['status'] == 'INVALID'){
+            $message = 'Invalid response on create stored shipment attempt for order: ' . $this->order->getIncrementId(). ', respnse body: '.$responseBody;
+            $this->logger->error($message);
+            throw new ApiException(__($message));
+        }
         $track = $this->trackFactory->create();
         $track->setCarrierCode(Carrier::CODE);
         $track->setTrackNumber($responseArray['id']);
@@ -143,7 +147,7 @@ class StoredShipment
             'sender' => [
                 'quickId' => $this->config->getSenderQuickId($storeId)
             ],
-            'orderNo' => $this->order->getIncrementId(),
+            'orderNo' => $this->order->getPayment()->getAdditionalInformation('svea_order_id'),
             'receiver' => $this->getReceiver(),
             'parcels' => $this->getParcels()
         ];
