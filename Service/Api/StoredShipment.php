@@ -149,8 +149,15 @@ class StoredShipment
             ],
             'orderNo' => $this->order->getPayment()->getAdditionalInformation('svea_order_id'),
             'receiver' => $this->getReceiver(),
-            'parcels' => $this->getParcels()
+            'parcels' => $this->getParcels(),
+            'prepareId' => $this->order->getPayment()->getAdditionalInformation('svea_order_id')
         ];
+        $location = $this->order->getPayment()->getAdditionalInformation('svea_shipping_info')['location'] ?? [];
+        if ($location) {
+            $shipmentData['agent'] = [
+                'quickId' => $location['id'],
+            ];
+        }
 
         return array_filter($shipmentData);
     }
